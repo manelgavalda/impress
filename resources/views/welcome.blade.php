@@ -69,6 +69,10 @@
                     <input type="name" name="state">
                     <label>State</label>
                     <br>
+
+                    <input type="name" name="provision_state">
+                    <label>Provision State</label>
+                    <br>
                     <br>
 
                     <input type="submit" value="Create">
