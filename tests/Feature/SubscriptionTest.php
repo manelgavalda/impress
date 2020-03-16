@@ -23,34 +23,26 @@ class SubscriptionTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function can_retrieve_all_subscriptions()
-    {
-        $this->get('subscription')
-            ->assertOk()
-            ->assertSee('Ramon Zampon');
-    }
-
-    /** @test */
+    /**
+    * To be a good test I will need to create it, check if exists and delete it,
+    * but it takes too long to be able to delete it after creating it.
+    * @test
+    */
     public function can_create_a_subscription()
     {
         $this->get('subscription')
-            ->assertOk()
             ->assertDontSee('Another Subscription');
 
-        $this->post('subscription', [
+        $r$this->post('subscription', [
             "first_name" => 'Another',
             "last_name" => 'Subscription',
             "email" => 'ramonzampon@atomia.com',
             "domain_name" => '1112',
             "external_user_id" => 27,
-            "external_subscription_id" => 27,
-            "product_id" => 3,
-            "state" => 'ACTIVATED'
+            "external_subscription_id" => 27
         ])->assertRedirect('subscription');
 
         $this->get('subscription')
-            ->assertOk()
             ->assertSee('Another Subscription');
     }
 }

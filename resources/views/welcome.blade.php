@@ -15,11 +15,6 @@
                 background-color: #fff;
                 color: #636b6f;
                 font-family: 'Nunito', sans-serif;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
             }
 
             .flex-center {
@@ -30,7 +25,7 @@
         </style>
     </head>
     <body>
-        <div class="flex-center full-height">
+        <div class="flex-center">
             <div>
                 <form action="/subscription" method="post">
                     @csrf
@@ -42,7 +37,7 @@
                     <label>First Name</label>
                     <br>
 
-                    <input type="name" name="second_name">
+                    <input type="name" name="last_name">
                     <label>Second Name</label>
                     <br>
 
@@ -61,23 +56,14 @@
                     <input type="name" name="external_user_id">
                     <label>User ID</label>
                     <br>
-
-                    <input type="name" name="product_id">
-                    <label>Product ID</label>
-                    <br>
-
-                    <input type="name" name="state">
-                    <label>State</label>
-                    <br>
-
-                    <input type="name" name="provision_state">
-                    <label>Provision State</label>
-                    <br>
                     <br>
 
                     <input type="submit" value="Create">
                 </form>
                 <br>
+                @if(session('message'))
+                    <p>{{ session('message') }}</p>
+                @endif
                 <table border>
                     <thead>
                         <th>ID</th>
