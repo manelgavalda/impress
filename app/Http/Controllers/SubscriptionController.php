@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Subscription;
 use App\Services\ImpressApi;
 
 class SubscriptionController extends Controller
@@ -19,15 +20,18 @@ class SubscriptionController extends Controller
         $this->apiUrl = config('impress.url') . '/api/subscription';
     }
 
-    /**
-     * If you have one item, it just returns one item ?
-     */
     public function index()
     {
-        $response = $this->client->get($this->apiUrl);
+        $subscriptions = Subscription::all();
+
+        if($subscriptions->where('state', 'PURCHASED')->isNotEmpty()) {
+            $response = $this->client->get($this->apiUrl);
+
+            Subscription::updateStates($response);
+        }
 
         return view('welcome', [
-            'subscriptions' => json_decode($response)->data
+            'subscriptions' => $subscriptions
         ]);
     }
 
@@ -47,22 +51,23 @@ class SubscriptionController extends Controller
         $response = optional(json_decode($response));
 
         if($response->statusCode == 202) {
-            $message = "{$response->data->first_name} {$response->data->last_name} created successfully.";
+            $data = $response->data;
+
+            Subscription::create([
+                'id' => $data->id,
+                'first_name' => $data->first_name,
+                'last_name' => $data->last_name,
+                'email' => $data->email,
+                'domain_name' => $data->domains[0]->domain_name,
+                'state' => $data->provision_state
+            ]);
+
+            $message = "{$data->first_name} {$data->last_name} created successfully.";
         } else {
             $message = 'Error when creating the new subscription.';
         }
 
         return redirect('/subscription')->with('message', $message);
-    }
-
-    public function update($id)
-    {
-        $this->client->put($this->apiUrl, [
-            'id' => $id,
-            'state' => request('state')
-        ]);
-
-        return redirect('/subscription');
     }
 
     public function destroy($id)
@@ -72,6 +77,8 @@ class SubscriptionController extends Controller
         $response = optional(json_decode($response));
 
         if($response->statusCode == 202) {
+            Subscription::find($id)->delete();
+
             $message = $response->message;
         } else {
             $message = 'Error when deleting the subscription';

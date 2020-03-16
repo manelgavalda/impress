@@ -46,7 +46,7 @@
                     <br>
 
                     <input type="name" name="domain_name">
-                    <label>Domain</label>
+                    <label>-deva.demo.impress.website (Domain)</label>
                     <br>
 
                     <input type="name" name="external_subscription_id">
@@ -71,9 +71,6 @@
                         <th>Email</th>
                         <th>Domain</th>
                         <th>State</th>
-                        <th>Provision State</th>
-                        <th>External User ID</th>
-                        <th>External Subscription ID</th>
                         <th>Delete</th>
                     </thead>
                     @foreach($subscriptions as $subscription)
@@ -81,11 +78,8 @@
                             <td>{{ $subscription->id }}</td>
                             <td>{{ $subscription->first_name }} {{ $subscription->last_name }}</td>
                             <td>{{ $subscription->email }}</td>
-                            <td>{{ $subscription->domains[0]->domain_name }}</td>
+                            <td>{{ $subscription->domain_name }}</td>
                             <td>{{ $subscription->state }}</td>
-                            <td>{{ $subscription->provision_state }}</td>
-                            <td>{{ $subscription->external_user_id }}</td>
-                            <td>{{ $subscription->external_subscription_id }}</td>
                             <td>
                                 <form action="/subscription/{{ $subscription->id }}" method="post">
                                     @csrf

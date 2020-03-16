@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use DB;
 use Tests\TestCase;
+use App\Subscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SubscriptionTest extends TestCase
@@ -23,26 +24,19 @@ class SubscriptionTest extends TestCase
         ]);
     }
 
-    /**
-    * To be a good test I will need to create it, check if exists and delete it,
-    * but it takes too long to be able to delete it after creating it.
-    * @test
-    */
-    public function can_create_a_subscription()
+    /** @test */
+    public function can_see_subscriptions()
     {
-        $this->get('subscription')
-            ->assertDontSee('Another Subscription');
-
-        $r$this->post('subscription', [
-            "first_name" => 'Another',
-            "last_name" => 'Subscription',
-            "email" => 'ramonzampon@atomia.com',
-            "domain_name" => '1112',
-            "external_user_id" => 27,
-            "external_subscription_id" => 27
-        ])->assertRedirect('subscription');
+        Subscription::create([
+            'id' => 'wqe2',
+            'first_name' => 'Manel',
+            'last_name' => 'Test',
+            'email' => 'manel@atomia.com',
+            'domain_name' => 'testdomain-deva.demo.impress.website',
+            'state' => 'ACTIVATED'
+        ]);
 
         $this->get('subscription')
-            ->assertSee('Another Subscription');
+            ->assertSee('Manel Test');
     }
 }
