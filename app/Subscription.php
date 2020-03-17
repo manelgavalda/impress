@@ -14,11 +14,11 @@ class Subscription extends Model
 
     protected function updateStates($response)
     {
-        $data = collect(json_decode($response)->data)->keyBy('id');
+        $data = collect($response->json()['data'])->keyBy('id');
 
         self::where('state', 'PURCHASED')
             ->get()
-            ->filter(fn($subscription) => $data[$subscription->id]->provision_state == 'ACTIVATED')
+            ->filter(fn($subscription) => $data[$subscription->id]['provision_state'] == 'ACTIVATED')
             ->each->update(['state' => 'ACTIVATED']);
     }
 }

@@ -28,7 +28,7 @@ class ImpressApi
         ]);
 
         DB::table('tokens')->insert([
-            'api_token' => json_decode($response->body())->access_token
+            'api_token' => $response->json()['access_token']
         ]);
     }
 }

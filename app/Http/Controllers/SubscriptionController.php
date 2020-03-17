@@ -22,16 +22,14 @@ class SubscriptionController extends Controller
 
     public function index()
     {
-        $subscriptions = Subscription::all();
-
-        if($subscriptions->where('state', 'PURCHASED')->isNotEmpty()) {
+        if(Subscription::whereState('PURCHASED')->exists()) {
             $response = $this->client->get($this->apiUrl);
 
             Subscription::updateStates($response);
         }
 
         return view('welcome', [
-            'subscriptions' => $subscriptions
+            'subscriptions' => Subscription::all()
         ]);
     }
 
@@ -46,23 +44,21 @@ class SubscriptionController extends Controller
             "external_subscription_id" => request('external_subscription_id'),
             "product_id" => "3",
             "state" => 'PURCHASED',
-        ]);
+        ])->json();
 
-        $response = optional(json_decode($response));
-
-        if($response->statusCode == 202) {
-            $data = $response->data;
+        if(optional($response)['statusCode'] == 202) {
+            $data = $response['data'];
 
             Subscription::create([
-                'id' => $data->id,
-                'first_name' => $data->first_name,
-                'last_name' => $data->last_name,
-                'email' => $data->email,
-                'domain_name' => $data->domains[0]->domain_name,
-                'state' => $data->provision_state
+                'id' => $data['id'],
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'email' => $data['email'],
+                'domain_name' => $data['domains'][0]['domain_name'],
+                'state' => $data['provision_state']
             ]);
 
-            $message = "{$data->first_name} {$data->last_name} created successfully.";
+            $message = "{$data['first_name']} {$data['last_name']} created successfully.";
         } else {
             $message = 'Error when creating the new subscription.';
         }
@@ -74,9 +70,9 @@ class SubscriptionController extends Controller
     {
         $response = $this->client->delete("{$this->apiUrl}/{$id}");
 
-        $response = optional(json_decode($response));
+        $response = optional($response->json());
 
-        if($response->statusCode == 202) {
+        if($response['statusCode'] == 202) {
             Subscription::find($id)->delete();
 
             $message = $response->message;
