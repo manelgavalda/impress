@@ -18,7 +18,8 @@ class Subscription extends Model
 
         self::where('state', 'PURCHASED')
             ->get()
-            ->filter(fn($subscription) => $data[$subscription->id]['provision_state'] == 'ACTIVATED')
-            ->each->update(['state' => 'ACTIVATED']);
+            ->filter(function($subscription) use ($data) {
+                return $data[$subscription->id]['provision_state'] == 'ACTIVATED';
+            })->each->update(['state' => 'ACTIVATED']);
     }
 }
